@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-abstract class BaseDecoder implements IDecoder {
+public abstract class BaseDecoder implements IDecoder {
 
     private static final String TAG = "BaseDecoder";
 
@@ -250,37 +250,37 @@ abstract class BaseDecoder implements IDecoder {
     /**
      * 检查子类参数
      */
-    abstract boolean check();
+    protected abstract boolean check();
 
     /**
      * 初始化数据提取器
      */
-    abstract IExtractor initExtractor(String path);
+    protected abstract IExtractor initExtractor(String path);
 
     /**
      * 初始化子类自己特有的参数
      */
-    abstract void initSpecParams(MediaFormat format);
+    protected abstract void initSpecParams(MediaFormat format);
 
     /**
      * 配置解码器
      */
-    abstract boolean configCodec(MediaCodec codec, MediaFormat format);
+    protected abstract boolean configCodec(MediaCodec codec, MediaFormat format);
 
     /**
      * 初始化渲染器
      */
-    abstract boolean initRender();
+    protected abstract boolean initRender();
 
     /**
      * 渲染
      */
-    abstract void render(ByteBuffer outputBuffer, MediaCodec.BufferInfo bufferInfo);
+    protected abstract void render(ByteBuffer outputBuffer, MediaCodec.BufferInfo bufferInfo);
 
     /**
      * 结束解码
      */
-    abstract void doneDecode();
+    protected abstract void doneDecode();
     /**
      * 解码线程进入等待
      */
