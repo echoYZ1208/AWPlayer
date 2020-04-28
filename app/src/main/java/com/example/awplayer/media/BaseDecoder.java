@@ -1,4 +1,4 @@
-package com.example.awplayer.media.decode;
+package com.example.awplayer.media;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
@@ -359,12 +359,27 @@ abstract class BaseDecoder implements IDecoder {
 
     @Override
     public void pause() {
-
+        mState = DecodeState.PAUSE;
     }
 
     @Override
     public void goOn() {
+        mState = DecodeState.DECODING;
+        notifyDecode();
+    }
 
+    /**
+     * 通知解码线程继续运行
+     */
+    protected void notifyDecode() {
+        synchronized(mLock) {
+            mLock.notifyAll();
+        }
+        if (mState == DecodeState.DECODING) {
+            if (mStateListener != null) {
+                mStateListener.onRunning(this);
+            }
+        }
     }
 
     @Override
@@ -379,22 +394,24 @@ abstract class BaseDecoder implements IDecoder {
 
     @Override
     public void stop() {
-
+        mState = DecodeState.STOP;
+        mIsRunning = false;
+        notifyDecode();
     }
 
     @Override
     public boolean isDecoding() {
-        return false;
+        return mState == DecodeState.DECODING;
     }
 
     @Override
     public boolean isSeeking() {
-        return false;
+        return mState == DecodeState.SEEKING;
     }
 
     @Override
     public boolean isStop() {
-        return false;
+        return mState == DecodeState.STOP;
     }
 
     @Override
@@ -404,22 +421,22 @@ abstract class BaseDecoder implements IDecoder {
 
     @Override
     public void setStateListener(IDecoderStateListener l) {
-
+        mStateListener = l;
     }
 
     @Override
     public int getWidth() {
-        return 0;
+        return mVideoWidth;
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        return mVideoHeight;
     }
 
     @Override
     public long getDuration() {
-        return 0;
+        return mDuration;
     }
 
     @Override
@@ -444,11 +461,12 @@ abstract class BaseDecoder implements IDecoder {
 
     @Override
     public String getFilePath() {
-        return null;
+        return mFilePath;
     }
 
     @Override
     public IDecoder withoutSync() {
-        return null;
+        mSyncRender = false;
+        return this;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.awplayer.media.decode;
+package com.example.awplayer.media;
 
 public interface IDecoderProgress {
     /**

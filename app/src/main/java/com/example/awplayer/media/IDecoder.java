@@ -1,6 +1,5 @@
-package com.example.awplayer.media.decode;
+package com.example.awplayer.media;
 
-import android.content.SyncRequest;
 import android.media.MediaFormat;
 
 public interface IDecoder extends Runnable {
