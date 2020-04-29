@@ -15,7 +15,7 @@ import com.example.awplayer.media.extractor.AudioExtractor;
 
 import java.nio.ByteBuffer;
 
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class AudioDecoder extends BaseDecoder {
 
     /**采样率*/

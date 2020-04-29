@@ -14,7 +14,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+//@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public abstract class BaseDecoder implements IDecoder {
 
     private static final String TAG = "BaseDecoder";
@@ -50,16 +51,15 @@ public abstract class BaseDecoder implements IDecoder {
      * 音视频数据读取器
      */
     private IExtractor mExtractor;
-
-    /**
-     * 解码输入缓存区
-     */
-    private List<ByteBuffer> mInputBuffers;
-
-    /**
-     * 解码输出缓存区
-     */
-    private List<ByteBuffer> mOutputBuffers;
+//    /**
+//     * 解码输入缓存区
+//     */
+//    private ByteBuffer[] mInputBuffers;
+//
+//    /**
+//     * 解码输出缓存区
+//     */
+//    private ByteBuffer[] mOutputBuffers;
 
     /**
      * 解码数据信息
@@ -112,7 +112,7 @@ public abstract class BaseDecoder implements IDecoder {
         }
 
         Log.i(TAG, "开始解码");
-//        try {
+        try {
             while (mIsRunning) {
                 // 判断是否需要阻塞
                 if (mState != DecodeState.START && mState != DecodeState.DECODING && mState != DecodeState.SEEKING) {
@@ -149,12 +149,12 @@ public abstract class BaseDecoder implements IDecoder {
                     }
                     //【解码步骤：4. 渲染】
                     if (mSyncRender) {// 如果只是用于编码合成新视频，无需渲染
-                        render(mOutputBuffers.get(index), mBufferInfo);
+                        render(mCodec.getOutputBuffer(index), mBufferInfo);
                     }
 
                     //将解码数据传递出去
                     Frame frame = new Frame();
-                    frame.buffer = mOutputBuffers.get(index);
+                    frame.buffer = mCodec.getOutputBuffer(index);
                     frame.setBufferInfo(mBufferInfo);
                     if (mStateListener != null) {
                         mStateListener.onDecodeOneFrame(this, frame);
@@ -176,12 +176,12 @@ public abstract class BaseDecoder implements IDecoder {
                     }
                 }
             }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             doneDecode();
             release();
-//        }
+        }
     }
 
     private boolean init() {
@@ -214,16 +214,16 @@ public abstract class BaseDecoder implements IDecoder {
     }
 
     private boolean initParams() {
-//        try {
+        try {
             MediaFormat format = mExtractor.getFormat();
             mDuration = format.getLong(MediaFormat.KEY_DURATION) / 1000;
             if (mEndPos == 0L) mEndPos = mDuration;
 
             initSpecParams(mExtractor.getFormat());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
@@ -238,8 +238,8 @@ public abstract class BaseDecoder implements IDecoder {
             }
             mCodec.start();
 
-            mInputBuffers = Arrays.asList(mCodec.getInputBuffers());
-            mOutputBuffers = Arrays.asList(mCodec.getOutputBuffers());
+//            mInputBuffers = mCodec.getInputBuffers() ;
+//            mOutputBuffers = mCodec.getOutputBuffers();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -305,7 +305,7 @@ public abstract class BaseDecoder implements IDecoder {
         boolean isEndOfStream = false;
 
         if (inputBufferIndex >= 0) {
-            ByteBuffer inputBuffer = mInputBuffers.get(inputBufferIndex);
+            ByteBuffer inputBuffer = mCodec.getInputBuffer(inputBufferIndex);
             int sampleSize = mExtractor.readBuffer(inputBuffer);
 
             if (sampleSize < 0) {
@@ -328,7 +328,7 @@ public abstract class BaseDecoder implements IDecoder {
             case MediaCodec.INFO_TRY_AGAIN_LATER:
                 break;
             case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
-                mOutputBuffers = Arrays.asList(mCodec.getOutputBuffers());
+//                mOutputBuffers = mCodec.getOutputBuffers() ;
                 break;
         }
         return index;
@@ -343,7 +343,7 @@ public abstract class BaseDecoder implements IDecoder {
     }
 
     private void release() {
-//        try {
+        try {
             Log.i(TAG, "解码停止，释放解码器");
             mState = DecodeState.STOP;
             mIsEOS = false;
@@ -353,9 +353,9 @@ public abstract class BaseDecoder implements IDecoder {
             if (mStateListener != null) {
                 mStateListener.onDestroy(this);
             }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

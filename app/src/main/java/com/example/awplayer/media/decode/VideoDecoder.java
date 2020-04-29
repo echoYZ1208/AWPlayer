@@ -16,7 +16,7 @@ import com.example.awplayer.media.extractor.VideoExtractor;
 
 import java.nio.ByteBuffer;
 
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class VideoDecoder extends BaseDecoder {
 
     private static final String TAG = "VideoDecoder";
