@@ -20,7 +20,7 @@ public class AudioExtractor implements IExtractor {
 
     @Override
     public MediaFormat getFormat() {
-        return mMediaExtractor.getVideoFormat();
+        return mMediaExtractor.getAudioFormat();
     }
 
     @Override

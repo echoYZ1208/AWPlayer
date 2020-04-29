@@ -58,9 +58,9 @@ public class VideoDecoder extends BaseDecoder {
         if (mSurface != null) {
             codec.configure(format, mSurface , null, 0);
             notifyDecode();
-        } else if (mSurfaceView.getHolder().getSurface() != null) {
-            mSurface = mSurfaceView.getHolder().getSurface();
-            configCodec(codec, format);
+//        } else if (mSurfaceView.getHolder().getSurface() != null) {
+//            mSurface = mSurfaceView.getHolder().getSurface();
+//            configCodec(codec, format);
         } else {
             mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback2() {
                 @Override

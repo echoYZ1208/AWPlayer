@@ -64,7 +64,7 @@ public abstract class BaseDecoder implements IDecoder {
     /**
      * 解码数据信息
      */
-    private MediaCodec.BufferInfo mBufferInfo;
+    private MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
 
     private DecodeState mState = DecodeState.STOP;
 
@@ -112,7 +112,7 @@ public abstract class BaseDecoder implements IDecoder {
         }
 
         Log.i(TAG, "开始解码");
-        try {
+//        try {
             while (mIsRunning) {
                 // 判断是否需要阻塞
                 if (mState != DecodeState.START && mState != DecodeState.DECODING && mState != DecodeState.SEEKING) {
@@ -176,12 +176,12 @@ public abstract class BaseDecoder implements IDecoder {
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
             doneDecode();
             release();
-        }
+//        }
     }
 
     private boolean init() {
@@ -214,16 +214,16 @@ public abstract class BaseDecoder implements IDecoder {
     }
 
     private boolean initParams() {
-        try {
+//        try {
             MediaFormat format = mExtractor.getFormat();
             mDuration = format.getLong(MediaFormat.KEY_DURATION) / 1000;
             if (mEndPos == 0L) mEndPos = mDuration;
 
             initSpecParams(mExtractor.getFormat());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
         return true;
     }
 
@@ -241,6 +241,7 @@ public abstract class BaseDecoder implements IDecoder {
             mInputBuffers = Arrays.asList(mCodec.getInputBuffers());
             mOutputBuffers = Arrays.asList(mCodec.getOutputBuffers());
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -342,7 +343,7 @@ public abstract class BaseDecoder implements IDecoder {
     }
 
     private void release() {
-        try {
+//        try {
             Log.i(TAG, "解码停止，释放解码器");
             mState = DecodeState.STOP;
             mIsEOS = false;
@@ -352,9 +353,9 @@ public abstract class BaseDecoder implements IDecoder {
             if (mStateListener != null) {
                 mStateListener.onDestroy(this);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
